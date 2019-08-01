@@ -24,7 +24,6 @@ module.exports = function (grunt) {
 		var done = this.async();
 
 		var options = this.options({
-			access: 'public-read',
 			accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 			secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 			sessionToken: process.env.AWS_SESSION_TOKEN,
@@ -484,7 +483,7 @@ module.exports = function (grunt) {
 				callback(null, false);
 			}
 			else {
-				s3.copyObject({ Key: object.dest, CopySource: encodeURIComponent(options.bucket + '/' + object.Key), Bucket: options.bucket, ACL: options.access }, function (err, data) {
+				s3.copyObject({ Key: object.dest, CopySource: encodeURIComponent(options.bucket + '/' + object.Key), Bucket: options.bucket }, function (err, data) {
 					if (err) {
 						callback(err);
 					}
@@ -695,7 +694,7 @@ module.exports = function (grunt) {
 				var originalPath = object.src.substr(0, lastDot)
 				
 				object.params = _.defaults({
-					ContentType: mime.lookup(mime.lookup(originalPath) || "application/octet-stream"),
+					ContentType: mime.lookup(originalPath) || "application/octet-stream",
 					ContentEncoding: 'gzip'
 				}, object.params || {})
 
@@ -722,8 +721,7 @@ module.exports = function (grunt) {
 				var upload = _.defaults({
 					ContentType: type,
 					Key: object.dest,
-					Bucket: options.bucket,
-					ACL: options.access
+					Bucket: options.bucket
 				}, object.params);
 
 				if (object.stream) {
